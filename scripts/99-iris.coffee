@@ -8,32 +8,31 @@ IRIS_APP_ID = process.env.IRIS_APP_ID
 IRIS_APP_TOKEN = process.env.IRIS_APP_TOKEN
 
 module.exports = (bot) ->
-	bot.respond /conectar?(me)?[\s]*(con|a)?[\s]*iris/i, (msg) ->
-		nick = msg.message.user.user_nick.toLowerCase()
-		data = JSON.stringify({
-		  nick: nick
-		})
-		bot.http('https://iris.taringo.xyz/api/v1/user/connect')
-			.header('Content-Type', 'application/json')
-			.header('X-App-Auth', IRIS_APP_ID + ' ' + IRIS_APP_TOKEN)
-			.post(data) (err, res, body) ->
-				try
-					data = JSON.parse(body)
-				catch ex
-					err = 'could not parse JSON response'
+  bot.respond /conectar?(me)?[\s]*(con|a)?[\s]*iris/i, (msg) ->
+    nick = msg.message.user.user_nick.toLowerCase()
 
-				if err
-					console.log("error connecting Iris account: #{err}")
-					msg.send('Estoy ocupada, intenta de nuevo en un rato')
-					return
+    bot.http('https://iris.taringo.xyz/api/v1/user/connect')
+      .header('Content-Type', 'application/json')
+      .header('X-App-Auth', IRIS_APP_ID + ' ' + IRIS_APP_TOKEN)
+      .query({ nick })
+      .get() (err, res, body) ->
+        try
+          data = JSON.parse(body)
+        catch ex
+          err = 'could not parse JSON response'
 
-				if not data.success
-					console.log("error connecting Iris account: #{data.error}")
-					msg.send('No puedo conectar tu cuenta ahora, intenta después')
-					return
+        if err
+          console.log("error connecting Iris account: #{err}")
+          msg.send('Estoy ocupada, intenta de nuevo en un rato')
+          return
 
-				console.log("successful Iris connection")
-				bot.adapter.taringa.user.send_pm nick, 'Acceso a Iris', """Hola #{nick}!
+        if not data.success
+          console.log("error connecting Iris account: #{data.error}")
+          msg.send('No puedo conectar tu cuenta ahora, intenta después')
+          return
+
+        console.log("successful Iris connection")
+        bot.adapter.taringa.user.send_pm nick, 'Acceso a Iris', """Hola #{nick}!
 
 Estos son los datos que necesitas para acceder a Iris a través de tu cliente
 IRC favorito:
