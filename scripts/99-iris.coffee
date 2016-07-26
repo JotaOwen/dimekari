@@ -10,11 +10,13 @@ IRIS_APP_TOKEN = process.env.IRIS_APP_TOKEN
 module.exports = (bot) ->
 	bot.respond /conectar?(me)?[\s]*(con|a)?[\s]*iris/i, (msg) ->
 		nick = msg.message.user.user_nick.toLowerCase()
-
+		data = JSON.stringify({
+		  nick: nick
+		})
 		bot.http('https://iris.taringo.xyz/api/v1/user/connect')
 			.header('Content-Type', 'application/json')
 			.header('X-App-Auth', IRIS_APP_ID + ' ' + IRIS_APP_TOKEN)
-			.post(JSON.stringify({ nick })) (err, res, body) ->
+			.post(data) (err, res, body) ->
 				try
 					data = JSON.parse(body)
 				catch ex
