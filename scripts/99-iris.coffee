@@ -14,7 +14,7 @@ module.exports = (bot) ->
 		bot.http('https://iris.taringo.xyz/api/v1/user/connect')
 			.header('Content-Type', 'application/json')
 			.header('X-App-Auth', IRIS_APP_ID + ' ' + IRIS_APP_TOKEN)
-			.data(JSON.stringify({ nick })) (err, res, body) ->
+			.post(JSON.stringify({ nick })) (err, res, body) ->
 				try
 					data = JSON.parse(body)
 				catch ex
