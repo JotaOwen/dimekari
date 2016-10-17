@@ -8,7 +8,7 @@ function ask(user, service, text, callback) {
         q: text
     };
     request({
-        url: "https://api.kari.xyz/chat/ask?" + qs.stringify(query),
+        url: "https://kariapi.herokuapp.com/chat/ask?" + qs.stringify(query),
         json: true
     }, function(error, response, body) {
         if (!error && response.statusCode == 200) {

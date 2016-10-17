@@ -95,7 +95,7 @@ window.showMessage = function(id) {
 	$('#k-message-loading').fadeIn();
 	$('#k-message-view').fadeIn();
 	$.ajax({
-		url: '//kari.xyz/mp',
+		url: '//karit.herokuapp.com/mp',
 		data: { id: id },
 		dataType: 'json',
 		success: function(data) {
@@ -132,7 +132,7 @@ window.loadMessageList = function(p) {
 
 	$("#k-message-list").promise().done(function(){
 		$.ajax({
-			url: '//kari.xyz/mp/get',
+			url: '//karit.herokuapp.com/mp/get',
 			data: {
 				page: page,
 				q: window.searchMode ? $('#k-search-box').val() : '',
@@ -290,7 +290,7 @@ $(document).ready(function() {
 			return;
 
 		$.ajax({
-			url: '//kari.xyz/mp/last',
+			url: '//karit.herokuapp.com/mp/last',
 			data: { id: window.firstMessage, t: Date.now() },
 			dataType: 'json',
 			success: function(data) {
