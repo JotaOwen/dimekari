@@ -15,7 +15,7 @@ kariask = require('../modules/kariapi')
 S = require('string')
 Conversation  = require '../models/conversation'
 request = require "request"
-
+util = require('util')
 selectors = [
   'div._eF' #Fecha nacimiento, lugar de nacimiento
   '#cwos' #Calculos
