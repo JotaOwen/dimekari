@@ -81,7 +81,6 @@ module.exports = (robot) ->
         return msg.send "Listo :)"
       request.get "http://www.reddit.com/r/gifs/top/.json?sort=top&t=day", (err, res, body) ->
           try
-            console.log("debug", body)
             data = JSON.parse body
             list = data.data.children
             msg.send "Ok :)"
@@ -102,7 +101,6 @@ module.exports = (robot) ->
   setInterval () ->
     request.get "http://www.reddit.com/r/gifs/top/.json?sort=top&t=day", (err, res, body) ->
         try
-          console.log("debug", body)
           data = JSON.parse body
           list = data.data.children
           findGif(robot, list, 0)
