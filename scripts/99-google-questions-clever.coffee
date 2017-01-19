@@ -14,6 +14,8 @@ cheerio = require('cheerio')
 kariask = require('../modules/kariapi')
 S = require('string')
 Conversation  = require '../models/conversation'
+request = require "request"
+
 selectors = [
   'div._eF' #Fecha nacimiento, lugar de nacimiento
   '#cwos' #Calculos
@@ -27,6 +29,19 @@ selectors = [
   '#tw-target-text' #traducciones
   'div._mr.kno-fb-ctx'
 ]
+
+URL = 'http://www.google.%s/search?hl=%s&q=%s&start=%s&sa=N&num=%s&ie=UTF-8&oe=UTF-8&nfpr=1&gws_rd=ssl'
+config = 
+  tld: 'com.ar'
+  lang: 'es'
+  requestOptions:
+    jar: true
+    headers:
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+      'Accept-Language': 'es-419,es;q=0.8'
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'
+      'Connection': 'keep-alive'
+      'DNT': 1
 
 findResponse = (body) ->
   response = ''
@@ -61,22 +76,15 @@ askToKari = (txt,msg) ->
     msg.send response
     return msg.finish()
 
-igQuestion = (robot, query, callback) ->
-  robot.http("http://www.google.com.co/search")
-  .query({
-    hl: "es"
-    q: query
-    start: 0
-    sa: "N"
-    num: 25
-    ie: "UTF-8"
-    oe: "UTF-8"
-    nfpr: 1
-    gws_rd: "ssl"
-  })
-  .headers('Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8','Accept-Language': 'es-419,es;q=0.8','User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36','Connection': 'keep-alive','DNT': 1)
-  .get() (err, res, body) ->
-    if err == null
+igQuestion = (query, callback) ->
+  newUrl = util.format(URL, config.tld, config.lang, querystring.escape(query), 0, 25)
+  requestOptions = 
+    url: newUrl
+    method: 'GET'
+  for k of config.requestOptions
+    requestOptions[k] = config.requestOptions[k]
+  request requestOptions, (err, resp, body) ->
+    if err == null and resp.statusCode == 200
       response = findResponse(body)
       if response == ''
         return callback('Not found', null)
@@ -91,7 +99,7 @@ module.exports = (robot) ->
       r = new RegExp "kari(?:,)? (.*?)\\?(?:.*)?$", "i"
       matches = msg.message.text.match(r)
       if matches? && matches.length > 1
-        igQuestion robot, matches[1], (err, response) ->
+        igQuestion matches[1], (err, response) ->
           if !err
             msg.send response
             return msg.finish()

@@ -5,6 +5,10 @@
 #   hubot [b]follow|sigue a[/b] {nick} - Sigue a @'nick'
 #   hubot [b]escreador[/b] {usuario} - Verifica si <usuario> es creador en taringa
 #   hubot [b]estabaneado[/b] {usuario} - Verifica si <usuario> está baneado en taringa
+
+request = require "request"
+
+
 findGif = (robot,list,i) ->
   if i > 10
     return console.log "No se encontró ningun gif correcto"
@@ -75,8 +79,7 @@ module.exports = (robot) ->
       if msg.match[1]?
         robot.adapter.taringa.shout.add msg.match[1]
         return msg.send "Listo :)"
-      robot.http("http://www.reddit.com/r/gifs/top/.json?sort=top&t=day")
-        .get() (err, res, body) ->
+      request.get "http://www.reddit.com/r/gifs/top/.json?sort=top&t=day", (err, res, body) ->
           try
             console.log("debug", body)
             data = JSON.parse body
@@ -97,8 +100,7 @@ module.exports = (robot) ->
       robot.adapter.taringa.user.follow response
 
   setInterval () ->
-    robot.http("http://www.reddit.com/r/gifs/top/.json?sort=top&t=day")
-      .get() (err, res, body) ->
+    request.get "http://www.reddit.com/r/gifs/top/.json?sort=top&t=day", (err, res, body) ->
         try
           console.log("debug", body)
           data = JSON.parse body
