@@ -99,6 +99,7 @@ module.exports = (robot) ->
     robot.http("http://www.reddit.com/r/gifs/top/.json?sort=top&t=day")
       .get() (err, res, body) ->
         try
+          console.log("debug", body)
           data = JSON.parse body
           list = data.data.children
           findGif(robot, list, 0)
